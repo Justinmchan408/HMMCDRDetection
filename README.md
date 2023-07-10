@@ -3,7 +3,8 @@ Detecting CDRs in HiFi and ONT long reads with methylation tags using Viterbi Le
 
 ```
 |__ scripts
-    |__ HMMCDRReferenceDetection.py returns CDR regions in HOR centromere regions using methylation probabilities
+    |__ HMMCDRReferenceDetection.py returns CDR regions in HOR centromere regions using mod methylation probabilities with Viterbi Learning
+    |__ HMMCDRBaumWelchReferenceDetection.py returns CDR regions in HOR centromere regions using methylation probabilities with Baum Welch Learning
 ```
 
 ## How to run HMMCDRReferenceDetection.py
