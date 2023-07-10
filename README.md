@@ -4,10 +4,10 @@ Detecting CDRs in HiFi and ONT long reads with methylation tags using Viterbi Le
 ```
 |__ scripts
     |__ HMMCDRReferenceDetection.py returns CDR regions in HOR centromere regions using mod methylation probabilities with Viterbi Learning
-    |__ HMMCDRBaumWelchReferenceDetection.py returns CDR regions in HOR centromere regions using methylation probabilities with Baum Welch Learning
+    |__ HMMCDRBaumWelchReferenceDetection.py returns CDR regions in HOR centromere regions using methylation probabilities with the Baum Welch Algorithm
 ```
 
-## How to run HMMCDRReferenceDetection.py
+## How to run HMMBaumWelchCDRReferenceDetection.py
 
 Python libraries needed:
 ```
@@ -15,28 +15,31 @@ Python libraries needed:
 - numpy
 ```
 
-Command w/ Initial CDR Region Estimates:
+Example Command w/ Initial CDR Region Estimates:
 ```
-python3 HMMCDRReferenceDetection.py -a mod_pos_bed_file -b inital_cdr_estimate_bed_file > outfile.bed
+python3 HMMBaumWelchCDRReferenceDetection.py -m -a mod_pos_file.bed -b inital_cdr_estimate_file.bed > HMMCDRBaumWelchOutput.bed
 ```
 
-Command w/ Initial Transition and Emission Probabilities:
+Example Command w/ Initial Transition and Emission Probabilities:
 ```
-python3 HMMCDRReferenceDetection.py -a mod_pos_bed_file -m -aa AA_prob -ab AB_prob -ba BA_prob -bb BB_prob -ax AX_emission -ay AY_emission -bx BX_emission -by BY_emission > outfile.bed
+python3 HMMBaumWelchCDRReferenceDetection.py -a mod_pos_file.bed -aa 99.00 -ab 1.00 -ba 1.00 -bb 99.00 -ax 20.00 -ay 80.00 -bx 80.00 -by 20.00 > HMMCDRBaumWelchOutput.bed
 ```
 
 Inputs:
 - `-a` (required) bed file containing methylation probabilties. A tab delimited file (.tsv) with chromosome name as first column, start position of each site as second column, and methylation probabilty as a percent in the fourth column
 - `-b` (optional) bed file containing inital CDR region estimates in centromere. A tab delimited column (.tsv) withg chromosome as first column, start position of CDR region in second column and end position of CDR region of last column
-- `-m` (default = False, optional) Determines method to use inout file for CDR regions initial transition and emission matrices or entered values. Default is using input file
-- `-aa` (optional, float) Probability from next CpG position being in a CDR given current CpG position in CDR
-- `-ab` (optional, float) Probability from next CpG position not being in a CDR given current CpG position in CDR
-- `-ba` (optional, float) Probability from next CpG position not being in a CDR given current CpG position not in CDR
-- `-bb` (optional, float) Probability from next CpG position being in a CDR given current CpG position not in CDR
-- `-ax` (optional, float) Probability of current CpG position is methylated given current CpG position in CDR
-- `-ay` (optional, float) Probability of current CpG position is not methylated given current CpG position in CDR
-- `-bx` (optional, float) Probability of current CpG position is methylated given current CpG position not in CDR
-- `-by` (optional, float) Probability of current CpG position is not methylated given current CpG position not in CDR
+- `-m` (default = False, optional) Determines method to use inout file for CDR regions initial transition and emission matrices or entered values. Default is using entered values for the matrices
+- `-aa` (optional, float) Percentage from next CpG position being in a CDR given current CpG position in CDR
+- `-ab` (optional, float) Percentage from next CpG position not being in a CDR given current CpG position in CDR
+    - -aa and -ab should add up to 100.00
+- `-ba` (optional, float) Percentage from next CpG position not being in a CDR given current CpG position not in CDR
+- `-bb` (optional, float) Percentage from next CpG position being in a CDR given current CpG position not in CDR
+    - -ba and -bb should add up to 100.00
+- `-ax` (optional, float) Percentage of current CpG position is methylated given current CpG position in CDR
+- `-ay` (optional, float) Percentage of current CpG position is not methylated given current CpG position in CDR
+    - -ax and -ay should add up to 100.00
+- `-bx` (optional, float) Percentage of current CpG position is methylated given current CpG position not in CDR
+- `-by` (optional, float) Percentage of current CpG position is not methylated given current CpG position not in CDR
 
 
 Description of method:
