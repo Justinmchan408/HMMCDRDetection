@@ -40,13 +40,15 @@ Inputs:
     - -ax and -ay should add up to 100.00
 - `-bx` (optional, float) Percentage of current CpG position is methylated given current CpG position not in CDR
 - `-by` (optional, float) Percentage of current CpG position is not methylated given current CpG position not in CDR
+    - -bx and -by should add up to 100.00
 
 
 Description of method:
 
-- Begins with an estimated path of methylation of CG sites (or any other methylated sites) within centromere regions
-- Uses an EM algorithm using a first order HMM to determine CDRs
-    -   E step: Estimate state path or if a each site is in a CDR or not in a CDR using Viterbi Algorithm
-    -   M step: Resestimate transition and emission matrices using new state path and emission path aka Parameter Estimation
-- Continues running until algorithm convergence/matrices stop changing
-- Return bed file containing chromosome name, start position and end position of CDR estimates
+- Begins with an estimated path of methylation of CG sites (or any other methylated sites) within the centromere regions
+    - The algorithm also begins with initial transition matrices and emission matrices calculated from a file or inputted      on the command line
+- Uses an Baum-Welch EM algorithm using a first order HMM to determine CDRs
+    -   E step: Estimate pi matrix (Probabities of each site in a CDR/Not in CDR) and double pi matrix (Probabities of each edge when moving from previous mod site to next mod site)
+    -   M step: Resestimate transition and emission matrices by normalizing over pi and double pi matrix
+- Continues running until algorithm convergences (When matrices probabilties are changining by less than 0.0001
+- Return bed file containing chromosome name, start position and end position of CDR estimates, their probabilities of being a CDR 
