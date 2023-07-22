@@ -1,5 +1,5 @@
 # HMM_CDR_detect
-Detecting CDRs in HiFi and ONT long reads with methylation tags using Viterbi Learning
+Detecting CDRs in HiFi and ONT long reads with methylation tags using Baum Welch Algorithm
 
 ```
 |__ scripts
