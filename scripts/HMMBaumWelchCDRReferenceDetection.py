@@ -51,26 +51,34 @@ class CommandLine() :
                             default=50.0,
                             metavar="Methylation percentage cutoff for modification",
                             help="A float that represents a methylation percentage cutoff. Mod site metyhlation prob >= modCutoff(methylated), Mod site metyhlation prob < modCutoff (not methylated) ")
+        self.parser.add_argument("-o", "--matrixOutputFile",
+                            required=True,
+                            metavar="txt file containing initial matrices and final matrices",
+                            help="A file that is written initial and final transition and emission matrices of the Baum Welch algorithm")
         
 
         self.parser.add_argument("-aa",
                             required=False,
                             type = float,
+                            default=98.6981,
                             metavar="Probability from next CpG position being in a CDR given current CpG position in CDR",
                             help="Probability from next CpG position being in a CDR given current CpG position in CDR")
         self.parser.add_argument("-ab",
                             required=False,
                             type = float,
+                            default=1.3019,
                             metavar="Probability from next CpG position not being in a CDR given current CpG position in CDR",
                             help="Probability from next CpG position not being in a CDR given current CpG position in CDR")
         self.parser.add_argument("-bb",
                             required=False,
                             type = float,
+                            default=99.9368,
                             metavar="Probability from next CpG position not being in a CDR given current CpG position not in CDR",
                             help="Probability from next CpG position not being in a CDR given current CpG position not in CDR")
         self.parser.add_argument("-ba",
                             required=False,
                             type = float,
+                            default=0.0632,
                             metavar="Probability from next CpG position being in a CDR given current CpG position not in CDR",
                             help="Probability from next CpG position being in a CDR given current CpG position not in CDR")
         
@@ -78,21 +86,25 @@ class CommandLine() :
         self.parser.add_argument("-ax",
                             required=False,
                             type = float,
+                            default=11.1472,
                             metavar="Probability of current CpG position is methylated given current CpG position in CDR",
                             help="Probability of current CpG position is methylated given current CpG position in CDR")
         self.parser.add_argument("-ay",
                             required=False,
                             type = float,
+                            default=88.8528,
                             metavar="Probability of current CpG position is not methylated given current CpG position in CDR",
                             help="Probability of current CpG position is not methylated given current CpG position in CDR")
         self.parser.add_argument("-bx",
                             required=False,
                             type = float,
+                            default=81.0364,
                             metavar="Probability of current CpG position is methylated given current CpG position not in CDR",
                             help="Probability of current CpG position is methylated given current CpG position not in CDR")
         self.parser.add_argument("-by",
                             required=False,
                             type = float,
+                            default=18.9636,
                             metavar="Probability of current CpG position is not methylated given current CpG position not in CDR",
                             help="Probability of current CpG position is not methylated given current CpG position not in CDR")
     
@@ -387,10 +399,10 @@ class HMMBaumWelchCDRDetection:
             
             # Will expand first/beginning coordinate of CDR if not first condensed mod region
             if modIndex > 0:
-                firstModCoord = round((firstModCoord + condensedModPos[modIndex-1][2])/2, 2)
+                firstModCoord = round((firstModCoord + condensedModPos[modIndex-1][2])/2)
             # Will expand last/end coordinate of CDR if not last condensed mod region
             if modIndex < len(condensedModPos) - 1:
-                secondModCoord = round((secondModCoord + condensedModPos[modIndex+1][1])/2, 2)
+                secondModCoord = round((secondModCoord + condensedModPos[modIndex+1][1])/2)
             
             # Generates RGB value based on CDR prediction
             red, green, blue = round(255 - 255 * (cdrProb/100)), round(255 - 255 * (cdrProb/100)), 255
@@ -430,6 +442,10 @@ def main(options=None):
      # Creates HMMBaumWelchCDRDetection object to perform the Baum-Welch Algorithm to detect CDRs
     hmmCDRDetector = HMMBaumWelchCDRDetection()
 
+    # Write initial matrices lines
+    matricesWrite = ["Cutoff: " + str(thisCommandLine.args.modCutoff) + "\n"]
+    matricesWrite = matricesWrite + ["Initial Transition Matrix: \n", str(transitionMatrix[0,0]) + "\t", str(transitionMatrix[0,1]) + "\n", str(transitionMatrix[1,0]) + "\t", str(transitionMatrix[1,1]) + "\n"]
+    matricesWrite = matricesWrite + ["Initial Emission Matrix: \n", str(emissionMatrix[0,0]) + "\t", str(emissionMatrix[0,1]) + "\n", str(emissionMatrix[1,0]) + "\t", str(emissionMatrix[1,1]) + "\n"]
 
     # Loops until the difference between all transitions and emissions is less than 0.0001
     while np.max(transitionMatrix-prevTransitionMatrix) > 0.0001 or np.max(emissionMatrix-prevEmissionMatrix) > 0.0001:
@@ -441,6 +457,15 @@ def main(options=None):
         piStar, piDoubleStar = hmmCDRDetector.updateModCDRProbabilties(path, emissions, states, transitionMatrix, emissionMatrix)
         # Runs M step: Generates updated transition and emission matrices
         transitionMatrix, emissionMatrix = hmmCDRDetector.updateMatrices(path, states, emissions, piStar, piDoubleStar)
+
+    # Write final matrices lines
+    matricesWrite = matricesWrite + ["Final Transition Matrix: \n", str(transitionMatrix[0,0]) + "\t", str(transitionMatrix[0,1]) + "\n", str(transitionMatrix[1,0]) + "\t", str(transitionMatrix[1,1]) + "\n"]
+    matricesWrite = matricesWrite + ["Final Emission Matrix: \n", str(emissionMatrix[0,0]) + "\t", str(emissionMatrix[0,1]) + "\n", str(emissionMatrix[1,0]) + "\t", str(emissionMatrix[1,1]) + "\n\n"]
+
+    # Write to matrix file
+    matrixFile = open(thisCommandLine.args.matrixOutputFile, "a")
+    matrixFile.writelines(matricesWrite)
+    matrixFile.close()
     
     # Runs E step one more time to use pi star to determine probability of site to be in CDR or not
     piStar, piDoubleStar = hmmCDRDetector.updateModCDRProbabilties(path, emissions, states, transitionMatrix, emissionMatrix)
