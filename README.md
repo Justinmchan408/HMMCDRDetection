@@ -18,7 +18,9 @@ Python libraries needed:
 Example Command w/ Initial CDR Region Estimates:
 
 ```
-python3 HMMBaumWelchCDRReferenceDetection.py -m -a mod_pos_file.bed -b inital_cdr_estimate_file.bed > HMMCDRBaumWelchOutput.bed
+python3 HMMBaumWelchCDRReferenceDetection.py -m \
+-a mod_pos_file.bed -b inital_cdr_estimate_file.bed \
+> HMMCDRBaumWelchOutput.bed
 ```
 
 Example Command w/ Initial Transition and Emission Probabilities:
