@@ -52,7 +52,8 @@ class CommandLine() :
                             metavar="Methylation percentage cutoff for modification",
                             help="A float that represents a methylation percentage cutoff. Mod site metyhlation prob >= modCutoff(methylated), Mod site metyhlation prob < modCutoff (not methylated) ")
         self.parser.add_argument("-o", "--matrixOutputFile",
-                            required=True,
+                            required=False,
+                            default="",
                             metavar="txt file containing initial matrices and final matrices",
                             help="A file that is written initial and final transition and emission matrices of the Baum Welch algorithm")
         
@@ -463,9 +464,10 @@ def main(options=None):
     matricesWrite = matricesWrite + ["Final Emission Matrix: \n", str(emissionMatrix[0,0]) + "\t", str(emissionMatrix[0,1]) + "\n", str(emissionMatrix[1,0]) + "\t", str(emissionMatrix[1,1]) + "\n\n"]
 
     # Write to matrix file
-    matrixFile = open(thisCommandLine.args.matrixOutputFile, "a")
-    matrixFile.writelines(matricesWrite)
-    matrixFile.close()
+    if len(thisCommandLine.args.matrixOutputFile) > 0:
+        matrixFile = open(thisCommandLine.args.matrixOutputFile, "a")
+        matrixFile.writelines(matricesWrite)
+        matrixFile.close()
     
     # Runs E step one more time to use pi star to determine probability of site to be in CDR or not
     piStar, piDoubleStar = hmmCDRDetector.updateModCDRProbabilties(path, emissions, states, transitionMatrix, emissionMatrix)
