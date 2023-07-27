@@ -16,10 +16,14 @@ Python libraries needed:
 ```
 
 Example Command w/ Initial CDR Region Estimates:
-```python3 HMMBaumWelchCDRReferenceDetection.py -m -a mod_pos_file.bed -b inital_cdr_estimate_file.bed > HMMCDRBaumWelchOutput.bed```
+```
+python3 HMMBaumWelchCDRReferenceDetection.py -m -a mod_pos_file.bed -b inital_cdr_estimate_file.bed > HMMCDRBaumWelchOutput.bed
+```
 
 Example Command w/ Initial Transition and Emission Probabilities:
-```python3 HMMBaumWelchCDRReferenceDetection.py -a mod_pos_file.bed -aa 99.00 -ab 1.00 -ba 1.00 -bb 99.00 -ax 20.00 -ay 80.00 -bx 80.00 -by 20.00 > HMMCDRBaumWelchOutput.bed```
+```
+python3 HMMBaumWelchCDRReferenceDetection.py -a mod_pos_file.bed -aa 99.00 -ab 1.00 -ba 1.00 -bb 99.00 -ax 20.00 -ay 80.00 -bx 80.00 -by 20.00 > HMMCDRBaumWelchOutput.bed
+```
 
 Inputs:
 - `-a` (required) bed file containing methylation probabilties. A tab delimited file (.tsv) with chromosome name as first column, start position of each site as second column, and methylation probabilty as a percent in the fourth column
