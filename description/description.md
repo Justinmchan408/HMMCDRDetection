@@ -30,7 +30,7 @@ When implementing the Baum Welch Algorithm, it involves defining hidden states a
 
 The transition matrix is a matrix containing probabilities of the next event's hidden state given the current event's state. In other words, this is the probability that the next modification site is in a CDR or not in a CDR region, knowing that our current modification site is in a CDR or not in a CDR. The conditional probabilities can be written in the transition matrix that is used in the Baum-Welch Algorithm and other HMM related problems. The transition matrix is 2 x 2 matrix based on our 2 hidden states which can be defined as:
 
-|                               | CDR (Next Mod Site)                |  Not a CDR (Next Mod Site)               |
-| ----------------------------- | ---------------------------------- | ---------------------------------------- |
-| CDR (Current Mod Site)        | P(Next CDR Given Current CDR)      | P(Next Not a CDR Given Current CDR)      |
-| Not a CDR (Current Mod Site)  | P(Next CDR Given Current Not a CDR)| P(Next Not a CDR Given Current Not a CDR)|
+|                               | CDR (Next Mod Site)                |  Not a CDR (Next Mod Site)                |
+| ----------------------------- | ---------------------------------- | ----------------------------------------- |
+| CDR (Current Mod Site)        | -aa                                | -ab                                       |
+| Not a CDR (Current Mod Site)  | -ba                                | -bb                                       |
